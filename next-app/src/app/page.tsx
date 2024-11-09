@@ -1,17 +1,25 @@
 "use client";
 import Image from "next/image";
-import { useActiveAccount } from "thirdweb/react";
+import {
+  useActiveAccount,
+  useActiveWalletChain,
+  useWalletBalance,
+} from "thirdweb/react";
 import thirdwebIcon from "@public/thirdweb.svg";
 import { shortenAddress } from "thirdweb/utils";
 import { Button } from "@headlessui/react";
 import { client, wallet } from "./constants";
 import { AutoConnect } from "thirdweb/react";
 import Link from "next/link";
-import WalletCard from "@/components/WalletCard";
 
 export default function Home() {
   const account = useActiveAccount();
-
+  const chain = useActiveWalletChain();
+  const { data, isLoading, isError } = useWalletBalance({
+    chain,
+    address: account?.address,
+    client,
+  });
   return (
     <main className="p-4 pb-10 min-h-[100vh] flex items-center justify-center container max-w-screen-lg mx-auto bg-white">
       <div className="py-20">
@@ -22,14 +30,18 @@ export default function Home() {
               <Button
                 onClick={() =>
                   (window as any).Telegram.WebApp.openLink(
-                    `https://etherscan.io/address/${account.address}`
+                    `https://testnet.bscscan.com/address/${account.address}`
                   )
                 }
                 className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
               >
                 Smart Account: {shortenAddress(account.address)}
               </Button>
-              <WalletCard />
+              <p>Chain: {chain?.name}</p>
+              <div className="flex flex-col gap-2 items-center justify-center">
+                <p>Balance: {data?.displayValue}</p>
+                <p>Symbol: {data?.symbol}</p>
+              </div>
             </>
           ) : (
             <div className="flex flex-col gap-2 items-center justify-center">

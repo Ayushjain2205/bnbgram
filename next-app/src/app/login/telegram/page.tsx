@@ -58,7 +58,7 @@ function TelegramLoginContent() {
         className="w-36 h-36 animate-pulse"
         alt="bnbgram"
       />
-      Loading wallet...
+      Generating wallet...
     </div>
   );
 }
