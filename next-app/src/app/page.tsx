@@ -7,6 +7,7 @@ import { Button } from "@headlessui/react";
 import { client, wallet } from "./constants";
 import { AutoConnect } from "thirdweb/react";
 import Link from "next/link";
+import WalletCard from "@/components/WalletCard";
 
 export default function Home() {
   const account = useActiveAccount();
@@ -28,9 +29,10 @@ export default function Home() {
               >
                 Smart Account: {shortenAddress(account.address)}
               </Button>
+              <WalletCard />
             </>
           ) : (
-            <p className="text-sm text-zinc-400">Smart Account Not Connected</p>
+            <p className="text-sm text-zinc-400">Auto wallet not connected</p>
           )}
         </div>
       </div>
