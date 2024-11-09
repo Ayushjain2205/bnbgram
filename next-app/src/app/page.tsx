@@ -32,7 +32,14 @@ export default function Home() {
               <WalletCard />
             </>
           ) : (
-            <p className="text-sm text-zinc-400">Auto wallet not connected</p>
+            <div className="w-screen h-screen flex flex-col gap-2 items-center justify-center">
+              <img
+                src="/binance-wallet.svg"
+                className="w-36 h-36 animate-pulse"
+                alt="bnbgram"
+              />
+              Loading wallet...
+            </div>
           )}
         </div>
       </div>
