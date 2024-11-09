@@ -68,16 +68,16 @@ export default function Home() {
                       onClick={copyAddress}
                     >
                       {copySuccess ? (
-                        <Check className="w-4 h-4" />
+                        <Check className="w-2 h-2" />
                       ) : (
-                        <Copy className="w-4 h-4" />
+                        <Copy className="w-2 h-2" />
                       )}
                     </Button>
                   </div>
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-lg border-4 border-black bg-white hover:bg-yellow-100 absolute top-2 right-2"
+                    className="rounded-full border-2 border-black bg-white hover:bg-yellow-100 absolute top-2 right-2"
                     onClick={() => setShowBalance(!showBalance)}
                   >
                     {showBalance ? (
