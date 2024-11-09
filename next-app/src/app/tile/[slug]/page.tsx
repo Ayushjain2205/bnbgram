@@ -56,7 +56,7 @@ export default async function TilePage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-4">
+    <div className="min-h-screen bg-white text-black p-4">
       <div className="max-w-2xl mx-auto pt-8">
         <div className="bg-gray-800 rounded-lg shadow-xl overflow-hidden">
           {tileData.imageUrl && (
