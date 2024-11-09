@@ -13,7 +13,7 @@ export default function Home() {
   const account = useActiveAccount();
 
   return (
-    <main className="p-4 pb-10 min-h-[100vh] flex items-center justify-center container max-w-screen-lg mx-auto">
+    <main className="p-4 pb-10 min-h-[100vh] flex items-center justify-center container max-w-screen-lg mx-auto bg-white">
       <div className="py-20">
         <AutoConnect client={client} wallets={[wallet]} />
         <div className="flex justify-center mb-20">
@@ -32,7 +32,7 @@ export default function Home() {
               <WalletCard />
             </>
           ) : (
-            <div className="w-screen h-screen flex flex-col gap-2 items-center justify-center">
+            <div className="flex flex-col gap-2 items-center justify-center">
               <img
                 src="/binance-wallet.svg"
                 className="w-36 h-36 animate-pulse"

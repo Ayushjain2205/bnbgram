@@ -1,31 +1,33 @@
-import { parseMode } from '@grammyjs/parse-mode'
-import type { BotConfig, StorageAdapter } from 'grammy'
-import { Bot as TelegramBot } from 'grammy'
-import { startFeature } from './start.js'
-import type { Context, SessionData } from './context.js'
-import { createContextConstructor } from './context.js'
-import type { Logger } from '../logger.js'
-import type { Config } from '../config.js'
+import { parseMode } from "@grammyjs/parse-mode";
+import type { BotConfig, StorageAdapter } from "grammy";
+import { Bot as TelegramBot } from "grammy";
+import { startFeature } from "./start.js";
+import { messagesFeature } from "./messages.js";
+import type { Context, SessionData } from "./context.js";
+import { createContextConstructor } from "./context.js";
+import type { Logger } from "../logger.js";
+import type { Config } from "../config.js";
 
 interface Dependencies {
-  config: Config
-  logger: Logger
+  config: Config;
+  logger: Logger;
 }
 
 interface Options {
-  botSessionStorage?: StorageAdapter<SessionData>
-  botConfig?: Omit<BotConfig<Context>, 'ContextConstructor'>
+  botSessionStorage?: StorageAdapter<SessionData>;
+  botConfig?: Omit<BotConfig<Context>, "ContextConstructor">;
 }
 
-function getSessionKey(ctx: Omit<Context, 'session'>) {
-  return ctx.chat?.id.toString()
+function getSessionKey(ctx: Omit<Context, "session">) {
+  return ctx.chat?.id.toString();
 }
 
-export function createBot(token: string, dependencies: Dependencies, options: Options = {}) {
-  const {
-    config,
-    logger,
-  } = dependencies
+export function createBot(
+  token: string,
+  dependencies: Dependencies,
+  options: Options = {}
+) {
+  const { config, logger } = dependencies;
 
   const bot = new TelegramBot(token, {
     ...options.botConfig,
@@ -33,10 +35,10 @@ export function createBot(token: string, dependencies: Dependencies, options: Op
       logger,
       config,
     }),
-  })
+  });
 
   // Middlewares
-  bot.api.config.use(parseMode('HTML'))
+  bot.api.config.use(parseMode("HTML"));
 
   // config.isPollingMode && protectedBot.use(sequentialize(getSessionKey))
   // config.isDebug && protectedBot.use(updateLogger())
@@ -46,9 +48,10 @@ export function createBot(token: string, dependencies: Dependencies, options: Op
   // bot.use(session({ getSessionKey, storage: options.botSessionStorage }))
 
   // Handlers
-  bot.use(startFeature)
+  bot.use(startFeature);
+  bot.use(messagesFeature);
 
-  return bot
+  return bot;
 }
 
-export type Bot = ReturnType<typeof createBot>
+export type Bot = ReturnType<typeof createBot>;

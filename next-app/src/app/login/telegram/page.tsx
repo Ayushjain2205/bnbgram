@@ -52,7 +52,7 @@ function TelegramLoginContent() {
   });
 
   return (
-    <div className="w-screen h-screen flex flex-col gap-2 items-center justify-center">
+    <div className="flex flex-col gap-2 items-center justify-center">
       <img
         src="/binance-wallet.svg"
         className="w-36 h-36 animate-pulse"
