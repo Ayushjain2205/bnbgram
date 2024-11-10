@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+
 // Mock data for recent transactions
 const mockTransactions = [
   {
@@ -40,7 +41,7 @@ const mockTransactions = [
     id: 4,
     type: "mint",
     amount: "1 NFT",
-    collection: "CryptoPunks",
+    collection: "My test collection",
     date: "2024-11-10",
   },
   { id: 5, type: "swap", amount: "0.5 BNB", to: "10 CAKE", date: "2024-11-09" },
@@ -77,7 +78,7 @@ const mockTransactions = [
     id: 10,
     type: "mint",
     amount: "2 NFT",
-    collection: "Bored Apes",
+    collection: "Bored Test Collection",
     date: "2024-11-09",
   },
   {
@@ -163,6 +164,35 @@ export default function ActivityPage() {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const txDate = new Date(dateString);
+    txDate.setHours(0, 0, 0, 0);
+
+    if (txDate.getTime() === today.getTime()) {
+      return "Today";
+    } else if (txDate.getTime() === yesterday.getTime()) {
+      return "Yesterday";
+    } else {
+      return txDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+    }
+  };
+
+  const groupedTransactions = transactions.reduce((acc, tx) => {
+    const date = formatDate(tx.date);
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push(tx);
+    return acc;
+  }, {} as Record<string, typeof transactions>);
+
   return (
     <div className="container max-w-md mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
@@ -182,37 +212,41 @@ export default function ActivityPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4">
-          {transactions.map((tx) => (
-            <div
-              key={tx.id}
-              className="flex items-center justify-between py-3 border-b-2 border-black last:border-b-0"
-            >
-              <div className="flex items-center">
+          {Object.entries(groupedTransactions).map(([date, txs]) => (
+            <div key={date} className="mb-4 last:mb-0">
+              <h3 className="font-bold text-lg mb-2">{date}</h3>
+              {txs.map((tx) => (
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center ${getTransactionColor(
-                    tx.type
-                  )} border-2 border-black mr-3`}
+                  key={tx.id}
+                  className="flex items-center justify-between py-3 border-b-2 border-black last:border-b-0"
                 >
-                  {getTransactionIcon(tx.type)}
+                  <div className="flex items-center">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center ${getTransactionColor(
+                        tx.type
+                      )} border-2 border-black mr-3`}
+                    >
+                      {getTransactionIcon(tx.type)}
+                    </div>
+                    <div>
+                      <p className="font-bold capitalize">{tx.type}</p>
+                      <p className="text-sm text-gray-600">
+                        {getTransactionDetails(tx)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p
+                      className={`font-bold ${
+                        tx.type === "send" ? "text-red-500" : "text-green-500"
+                      }`}
+                    >
+                      {tx.type === "send" ? "-" : ""}
+                      {tx.amount}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-bold capitalize">{tx.type}</p>
-                  <p className="text-sm text-gray-600">
-                    {getTransactionDetails(tx)}
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p
-                  className={`font-bold ${
-                    tx.type === "send" ? "text-red-500" : "text-green-500"
-                  }`}
-                >
-                  {tx.type === "send" ? "-" : ""}
-                  {tx.amount}
-                </p>
-                <p className="text-sm text-gray-600">{tx.date}</p>
-              </div>
+              ))}
             </div>
           ))}
         </CardContent>
