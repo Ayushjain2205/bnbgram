@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { DollarSign, X, Image as ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -14,17 +14,42 @@ interface BlipData {
   description: string;
 }
 
-const timeButtons = ["LIVE", "4H", "1D", "1W", "1M", "3M", "MAX"];
+const timeButtons = ["LIVE", "4H", "1D", "1W", "1M", "3M", "ALL"];
 
-// Mock data for the graph
-const generateMockData = (points: number) => {
-  const data = [];
+interface DataPoint {
+  x: number;
+  y: number;
+}
+
+const generateMockData = (points: number, volatility: number): DataPoint[] => {
+  const data: DataPoint[] = [];
   let value = 0.01;
   for (let i = 0; i < points; i++) {
-    value += (Math.random() - 0.5) * 0.002;
-    data.push({ x: i, y: Math.max(0.001, value) });
+    value = Math.max(0.001, value + (Math.random() - 0.5) * volatility);
+    data.push({ x: i, y: value });
   }
   return data;
+};
+
+const generateTimeBasedData = (time: string): DataPoint[] => {
+  switch (time) {
+    case "LIVE":
+      return generateMockData(60, 0.0001);
+    case "4H":
+      return generateMockData(240, 0.0005);
+    case "1D":
+      return generateMockData(1440, 0.001);
+    case "1W":
+      return generateMockData(10080, 0.002);
+    case "1M":
+      return generateMockData(43200, 0.003);
+    case "3M":
+      return generateMockData(129600, 0.004);
+    case "ALL":
+      return generateMockData(525600, 0.005);
+    default:
+      return generateMockData(100, 0.001);
+  }
 };
 
 async function getBlipData(slug: string): Promise<BlipData | null> {
@@ -106,16 +131,22 @@ export default async function BlipPage({
 }
 
 function MemecoinBuy() {
-  const [selectedTime, setSelectedTime] = useState("MAX");
-  const mockData = useMemo(() => generateMockData(100), []);
+  const [selectedTime, setSelectedTime] = useState("LIVE");
+  const [chartData, setChartData] = useState<DataPoint[]>([]);
 
-  const currentPrice = mockData[mockData.length - 1].y;
-  const startPrice = mockData[0].y;
+  useEffect(() => {
+    setChartData(generateTimeBasedData(selectedTime));
+  }, [selectedTime]);
+
+  const currentPrice =
+    chartData.length > 0 ? chartData[chartData.length - 1].y : 0;
+  const startPrice = chartData.length > 0 ? chartData[0].y : 0;
   const priceChange = currentPrice - startPrice;
-  const percentageChange = (priceChange / startPrice) * 100;
+  const percentageChange =
+    startPrice !== 0 ? (priceChange / startPrice) * 100 : 0;
 
-  // Function to generate the SVG path
-  const generatePath = (data: { x: number; y: number }[]) => {
+  const generatePath = useCallback((data: DataPoint[]) => {
+    if (data.length === 0) return "";
     const maxY = Math.max(...data.map((d) => d.y));
     const minY = Math.min(...data.map((d) => d.y));
     const yRange = maxY - minY;
@@ -123,11 +154,11 @@ function MemecoinBuy() {
     return data
       .map((d, i) => {
         const x = (d.x / (data.length - 1)) * 100;
-        const y = 100 - ((d.y - minY) / yRange) * 80; // 80% of height, leaving room for padding
+        const y = 100 - ((d.y - minY) / yRange) * 80;
         return `${i === 0 ? "M" : "L"} ${x} ${y}`;
       })
       .join(" ");
-  };
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -151,7 +182,9 @@ function MemecoinBuy() {
             {priceChange >= 0 ? "+" : "-"}${Math.abs(priceChange).toFixed(4)}
           </span>
           <span>({percentageChange.toFixed(2)}%)</span>
-          <span className="text-gray-600 text-sm">All time</span>
+          <span className="text-gray-600 text-sm">
+            {selectedTime === "LIVE" ? "Last minute" : selectedTime}
+          </span>
         </div>
       </div>
 
@@ -162,7 +195,7 @@ function MemecoinBuy() {
           className="w-full h-full"
         >
           <path
-            d={generatePath(mockData)}
+            d={generatePath(chartData)}
             fill="none"
             stroke={priceChange >= 0 ? "rgb(22 163 74)" : "rgb(220 38 38)"}
             strokeWidth="0.5"
