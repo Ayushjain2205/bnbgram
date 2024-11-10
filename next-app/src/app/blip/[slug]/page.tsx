@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { DollarSign, Info, X, Image as ImageIcon } from "lucide-react";
+import { useState, useMemo } from "react";
+import { DollarSign, X, Image as ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import { notFound } from "next/navigation";
 
@@ -15,6 +13,19 @@ interface BlipData {
   title: string;
   description: string;
 }
+
+const timeButtons = ["LIVE", "4H", "1D", "1W", "1M", "3M", "MAX"];
+
+// Mock data for the graph
+const generateMockData = (points: number) => {
+  const data = [];
+  let value = 0.01;
+  for (let i = 0; i < points; i++) {
+    value += (Math.random() - 0.5) * 0.002;
+    data.push({ x: i, y: Math.max(0.001, value) });
+  }
+  return data;
+};
 
 async function getBlipData(slug: string): Promise<BlipData | null> {
   try {
@@ -35,12 +46,6 @@ export default async function BlipPage({
   params: { slug: string };
 }) {
   const router = useRouter();
-  const [amount, setAmount] = useState("");
-  const [paymentAmount, setPaymentAmount] = useState("");
-  const memePrice = 0.0123;
-  const [nftName, setNftName] = useState("");
-  const [nftDescription, setNftDescription] = useState("");
-
   const blipData = await getBlipData(params.slug);
 
   if (!blipData) {
@@ -49,22 +54,8 @@ export default async function BlipPage({
 
   const isMemecoin = blipData.id === "memecoin";
 
-  const handleAmountChange = (value: string) => {
-    setAmount(value);
-    setPaymentAmount((parseFloat(value) * memePrice).toFixed(2));
-  };
-
-  const handlePaymentChange = (value: string) => {
-    setPaymentAmount(value);
-    setAmount((parseFloat(value) / memePrice).toFixed(2));
-  };
-
-  const handleBuy = () => {
-    console.log(`Buying ${amount} $MEME for $${paymentAmount}`);
-  };
-
   const handleMint = () => {
-    console.log(`Minting NFT: ${nftName} - ${nftDescription}`);
+    console.log(`Minting NFT`);
   };
 
   return (
@@ -88,71 +79,7 @@ export default async function BlipPage({
           </CardHeader>
           <CardContent className="p-4 space-y-4">
             {isMemecoin ? (
-              <>
-                <div className="flex items-center justify-center mb-4">
-                  <img
-                    src="/meme-logo.png"
-                    alt="MEME Token"
-                    className="w-16 h-16"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="meme-amount" className="text-lg font-bold">
-                    Amount of $MEME
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="meme-amount"
-                      type="number"
-                      placeholder="0.00"
-                      value={amount}
-                      onChange={(e) => handleAmountChange(e.target.value)}
-                      className="pr-16 border-2 border-black rounded-xl"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 font-bold">
-                      $MEME
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="payment-amount" className="text-lg font-bold">
-                    Payment Amount
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="payment-amount"
-                      type="number"
-                      placeholder="0.00"
-                      value={paymentAmount}
-                      onChange={(e) => handlePaymentChange(e.target.value)}
-                      className="pr-16 border-2 border-black rounded-xl"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 font-bold">
-                      USD
-                    </span>
-                  </div>
-                </div>
-
-                <div className="bg-gray-100 p-4 rounded-xl border-2 border-black">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold">Price per $MEME</span>
-                    <span>${memePrice.toFixed(4)}</span>
-                  </div>
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="font-bold">Total Cost</span>
-                    <span>${paymentAmount}</span>
-                  </div>
-                </div>
-
-                <Button
-                  onClick={handleBuy}
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 rounded-xl border-2 border-black transition-colors"
-                >
-                  <DollarSign className="mr-2 h-5 w-5" /> Buy $MEME
-                </Button>
-              </>
+              <MemecoinBuy />
             ) : (
               <>
                 <div className="flex items-center justify-center mb-4">
@@ -162,13 +89,6 @@ export default async function BlipPage({
                     className="w-64"
                   />
                 </div>
-
-                {/* <div className="bg-gray-100 p-4 rounded-xl border-2 border-black">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold"> Free Mint</span>
-                    <span>0.1 ETH</span>
-                  </div>
-                </div> */}
 
                 <Button
                   onClick={handleMint}
@@ -180,6 +100,102 @@ export default async function BlipPage({
             )}
           </CardContent>
         </Card>
+      </div>
+    </div>
+  );
+}
+
+function MemecoinBuy() {
+  const [selectedTime, setSelectedTime] = useState("MAX");
+  const mockData = useMemo(() => generateMockData(100), []);
+
+  const currentPrice = mockData[mockData.length - 1].y;
+  const startPrice = mockData[0].y;
+  const priceChange = currentPrice - startPrice;
+  const percentageChange = (priceChange / startPrice) * 100;
+
+  // Function to generate the SVG path
+  const generatePath = (data: { x: number; y: number }[]) => {
+    const maxY = Math.max(...data.map((d) => d.y));
+    const minY = Math.min(...data.map((d) => d.y));
+    const yRange = maxY - minY;
+
+    return data
+      .map((d, i) => {
+        const x = (d.x / (data.length - 1)) * 100;
+        const y = 100 - ((d.y - minY) / yRange) * 80; // 80% of height, leaving room for padding
+        return `${i === 0 ? "M" : "L"} ${x} ${y}`;
+      })
+      .join(" ");
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <img
+          src="/meme-logo.png"
+          alt="MEME Token"
+          className="w-10 h-10 rounded-full border-2 border-black"
+        />
+        <span className="font-bold text-lg">$MEME</span>
+      </div>
+
+      <div className="space-y-1">
+        <div className="text-4xl font-bold">${currentPrice.toFixed(4)}</div>
+        <div
+          className={`flex items-center gap-2 ${
+            priceChange >= 0 ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          <span>
+            {priceChange >= 0 ? "+" : "-"}${Math.abs(priceChange).toFixed(4)}
+          </span>
+          <span>({percentageChange.toFixed(2)}%)</span>
+          <span className="text-gray-600 text-sm">All time</span>
+        </div>
+      </div>
+
+      <div className="h-48 bg-gray-100 rounded-xl border-2 border-black relative overflow-hidden">
+        <svg
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          className="w-full h-full"
+        >
+          <path
+            d={generatePath(mockData)}
+            fill="none"
+            stroke={priceChange >= 0 ? "rgb(22 163 74)" : "rgb(220 38 38)"}
+            strokeWidth="0.5"
+          />
+        </svg>
+      </div>
+
+      <div className="flex justify-between bg-gray-100 rounded-xl border-2 border-black p-1">
+        {timeButtons.map((time) => (
+          <Button
+            key={time}
+            variant="ghost"
+            className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+              selectedTime === time
+                ? "bg-yellow-400 text-black"
+                : "text-gray-600 hover:text-black hover:bg-gray-200"
+            }`}
+            onClick={() => setSelectedTime(time)}
+          >
+            {time}
+          </Button>
+        ))}
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex justify-between items-center text-sm">
+          <span className="text-gray-600">Your balance</span>
+          <span>0 $MEME</span>
+        </div>
+
+        <Button className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl border-2 border-black transition-colors">
+          <DollarSign className="mr-2 h-5 w-5" /> Buy $MEME
+        </Button>
       </div>
     </div>
   );
