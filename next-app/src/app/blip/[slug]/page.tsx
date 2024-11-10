@@ -99,7 +99,7 @@ export default async function BlipPage({
         <Card className="border-4 border-black rounded-2xl overflow-hidden">
           <CardHeader className="bg-yellow-400 border-b-4 border-black">
             <CardTitle className="text-xl font-bold text-center">
-              {isMemecoin ? "Buy $MEME Token" : "Mint NFT"}
+              {isMemecoin ? "Buy Memecoin" : "Mint NFT"}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 space-y-4">
