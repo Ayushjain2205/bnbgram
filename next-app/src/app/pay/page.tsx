@@ -33,6 +33,7 @@ const PayHome: React.FC = () => {
       <PayEmbed
         client={client}
         payOptions={{
+          buyWithCrypto: false,
           prefillBuy: {
             chain: bsc,
             amount: "1",
