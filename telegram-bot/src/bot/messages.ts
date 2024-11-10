@@ -38,12 +38,12 @@ feature.on("message:text", async (ctx) => {
 
   if (urlCheck.isValid && urlCheck.path) {
     // Create Web App URL directly to the tile
-    const webAppUrl = `${process.env.FRONTEND_APP_ORIGIN}/tile/${urlCheck.path}`;
+    const webAppUrl = `${process.env.FRONTEND_APP_ORIGIN}/blip/${urlCheck.path}`;
 
     // Create inline keyboard with Web App button
-    const keyboard = new InlineKeyboard().webApp("Launch tile", webAppUrl);
+    const keyboard = new InlineKeyboard().webApp("Launch Blip", webAppUrl);
 
-    return ctx.reply("View this tile:", { reply_markup: keyboard });
+    return ctx.reply("View this Blip:", { reply_markup: keyboard });
   }
 
   // If not a bnbgram URL, just echo the message back
