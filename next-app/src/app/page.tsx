@@ -11,19 +11,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { client, wallet } from "./constants";
 import { AutoConnect } from "thirdweb/react";
 import Link from "next/link";
-import {
-  Eye,
-  EyeOff,
-  User,
-  Copy,
-  Check,
-  ArrowUp,
-  ArrowDown,
-  CreditCard,
-} from "lucide-react";
+import { Eye, EyeOff, User, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const account = useActiveAccount();
   const chain = useActiveWalletChain();
   const { data, isLoading, isError } = useWalletBalance({
@@ -134,7 +127,10 @@ export default function Home() {
 
               {/* Simple Quick Action Buttons */}
               <div className="grid grid-cols-3 gap-4 mt-4">
-                <Button className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl">
+                <Button
+                  className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl"
+                  onClick={() => router.push("/send")}
+                >
                   <img src="/send.svg" alt="send" className="w-10 h-10" />
                   <span className="text-sm font-bold text-black">Send</span>
                 </Button>
