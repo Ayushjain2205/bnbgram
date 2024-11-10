@@ -152,17 +152,26 @@ export default function Home() {
                     Buy
                   </span>
                 </Button>
-                <Button className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl">
+                <Button
+                  className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl"
+                  onClick={() => router.push("/bridge")}
+                >
                   <img src="/bridge.svg" alt="bridge" className="w-12 h-12" />
                   <span className="text-sm font-bold text-black">Bridge</span>
                 </Button>
 
-                <Button className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl">
+                <Button
+                  className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl"
+                  onClick={() => router.push("/swap")}
+                >
                   <img src="/swap.svg" alt="swap" className="w-14 h-14" />
                   <span className="text-sm font-bold text-black">Swap</span>
                 </Button>
 
-                <Button className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl">
+                <Button
+                  className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl"
+                  onClick={() => router.push("/activity")}
+                >
                   <img
                     src="/activity.svg"
                     alt="activity"
