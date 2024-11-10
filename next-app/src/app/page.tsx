@@ -135,12 +135,18 @@ export default function Home() {
                   <span className="text-sm font-bold text-black">Send</span>
                 </Button>
 
-                <Button className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl">
+                <Button
+                  className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl"
+                  onClick={() => router.push("/receive")}
+                >
                   <img src="/receive.svg" alt="receive" className="w-10 h-10" />
                   <span className="text-sm font-bold text-black">Receive</span>
                 </Button>
 
-                <Button className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl">
+                <Button
+                  className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl"
+                  onClick={() => router.push("/pay")}
+                >
                   <img src="/buy.svg" alt="buy" className="w-12 h-12 " />
                   <span className="text-sm font-bold text-black mt-[10px]">
                     Buy
