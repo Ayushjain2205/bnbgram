@@ -154,7 +154,7 @@ export default function Home() {
                 </Button>
                 <Button
                   className="flex flex-col items-center justify-between p-4 h-24 bg-white hover:bg-yellow-100 border-2 border-black rounded-xl"
-                  onClick={() => router.push("/bridge")}
+                  onClick={() => router.push("/gasless")}
                 >
                   <img src="/bridge.svg" alt="bridge" className="w-12 h-12" />
                   <span className="text-sm font-bold text-black">Bridge</span>
