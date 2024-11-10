@@ -17,10 +17,10 @@ export default function CreateBlipPage() {
   const [blipType, setBlipType] = useState<BlipType>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    id: "",
-    title: "",
-    description: "",
-    shortUrl: "",
+    id: "1",
+    title: "Pyjama Coin",
+    description: "A coin for the pyjama fans",
+    shortUrl: "pyjcoin",
     parentContract: "",
   });
 

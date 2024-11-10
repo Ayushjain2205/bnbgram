@@ -10,7 +10,8 @@ const isBnbgramUrl = (
   text: string
 ): { isValid: boolean; path: string | null } => {
   try {
-    const regex = /https:\/\/bnbgram\/([^\s]+)/;
+    const regex = /https:\/\/bnbgram.netlify.app\/([^\s]+)/;
+
     const match = text.match(regex);
 
     if (match && match[1]) {

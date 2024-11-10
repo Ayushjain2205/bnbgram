@@ -164,7 +164,7 @@ function MemecoinBuy() {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <img
-          src="/meme-logo.png"
+          src="https://pump.mypinata.cloud/ipfs/QmXca5tZqLEoZn9CXSMiiLzdZny8tL4f432tEfuQUXEDTi?img-width=800&img-dpr=2&img-onerror=redirect"
           alt="MEME Token"
           className="w-10 h-10 rounded-full border-2 border-black"
         />
